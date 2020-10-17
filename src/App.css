@@ -5,41 +5,27 @@
 }
 
 .App-header {
-  font-size: calc(10px + 2vmin);
+  font-size: calc(10px + 4vmin);
   color:  #61dafb;
   text-align: center;
   margin-bottom: 50px;
 }
 
 .intro{
-
+  text-align: center;
+  justify-content: center;
   margin-bottom: 30px;
 }
 
 
-.sub:hover{
-  color: #61dafb;
+Form.Control{
+  width: 20%;
 }
 
-.sub{
-  font-size: 12px;
-
+#err{
+  color:rgb(255, 30, 0);
+  font-size: 20px;
+  display: none;
 }
 
-ul li{
-  margin-top:15px;
-}
 
-ul{
-  padding: 0px 18px;
-}
-
-.list{
-  display: inline-block;
-  margin: 0px 20px;
-  vertical-align: top;
-}
-
-.subtitle{
-  font-size: 22px;
-}

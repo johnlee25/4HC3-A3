@@ -1,72 +1,83 @@
 import React from 'react';
 import './App.css';
+import Lists from './Lists.js'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Col, Container, Form } from 'react-bootstrap';
+import { Button, Col, Form } from 'react-bootstrap';
 
 
-class Lists extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { items: [], nextID: 0, editIndex: 0, input: "", mode: "Add", prio: "none", prioIndex: 0 }
+    this.state = { items: [], nextID: 0, editIndex: 0, input: "", mode: "Edit" }
   }
-  
-  submit() {
-    if (this.state.mode == "Add") {
+
+  create() {
+    let errormsg = document.getElementById("err");
+    if (this.state.input != "" && this.state.mode == "Edit") {
+      errormsg.style.display = "none";
       this.setState({
         nextID: this.state.nextID + 1,
         input: "",
         items: [...this.state.items,
-        { item: this.state.input, id: this.state.nextID + 1 }]
+        { title: this.state.input, id: this.state.nextID + 1 }]
+      })
+    }
+    else if (this.state.mode == "Done") {
+      errormsg.style.display = "inline-block";
+      errormsg.innerHTML = "In Edit Mode";
+    }
+    else {
+      errormsg.style.display = "inline-block";
+      errormsg.innerHTML = "Field Is Blank";
+    }
+  }
+
+  delete() {
+    let errormsg = document.getElementById("err");
+    var dele = this.state.items.find(({ title }) => this.state.input == title);
+    //console.log(dele.title);
+    if (this.state.input == dele.title) {
+      errormsg.style.display = "none";
+      this.setState({
+        input: "",
+        items: this.state.items.filter(({ title, id }) => title != this.state.input)
       })
     }
     else {
-      var newItems = this.state.items;
-      newItems[this.state.editIndex].item = this.state.input;
+      errormsg.style.display = "inline-block";
+      errormsg.innerHTML = "Could Not Find";
+    }
+  }
 
+  edit() {
+    let errormsg = document.getElementById("err");
+    if (this.state.input != "" && this.state.mode == "Edit") {
+      errormsg.style.display = "none";
+      var edit = this.state.items.find(({ title, id }) => this.state.input == title);
       this.setState({
-        mode: "Add",
+        input: edit.title,
+        mode: "Done",
+        editIndex: this.state.items.indexOf(edit)
+      })
+      console.log(this.state.items.indexOf(edit));
+    }
+    else if(this.state.input != "" && this.state.mode == "Done"){
+      errormsg.style.display = "none";
+      var newTitle = this.state.title;
+      newTitle[this.state.editIndex].title = this.state.input;
+      this.setState({
+        mode: "Edit",
         input: "",
-        items: newItems
+        items: newTitle
       })
+    }
+    else{
+      errormsg.style.display = "inline-block";
+      errormsg.innerHTML = "Field Is Blank";
     }
   }
 
-  delete(delID) {
-    if (this.state.mode != "Edit") {
-      this.setState({
-        items: this.state.items.filter(({ item, id }) => id != delID)
-      })
-    }
-  }
-
-  edit(editID) {
-    var editItem = this.state.items.find(({ item, id }) => id == editID);
-    this.setState({
-      input: editItem.item,
-      mode: "Edit",
-      editIndex: this.state.items.indexOf(editItem)
-    })
-  }
-
-  addDate(editID) {
-    var editItem = this.state.items.find(({ item, id }) => id == editID);
-    this.setState({
-      input: editItem.item,
-      mode: "Edit",
-      editIndex: this.state.items.indexOf(editItem)
-    })
-  }
-
-  addNote(editID) {
-    var editItem = this.state.items.find(({ item, id }) => id == editID);
-    this.setState({
-      input: editItem.item,
-      mode: "Edit",
-      editIndex: this.state.items.indexOf(editItem)
-    })
-  }
-
-  setPrio(prioID) {
+  editTitle(prioID) {
     var editPrio = this.state.items.find(({ item, id }) => id == prioID);
     this.setState({
       input: editPrio.item,
@@ -75,104 +86,50 @@ class Lists extends React.Component {
     })
   }
 
-  render() {
-    return (
-      <div class="list">
-        <div class="subtitle">test</div>
-        <Form.Row className="align-items-center">
-          <Col xs="auto">
-            <Form.Control type="text" placeholder="Enter Data Here"
-              onChange={(event) => this.setState({ input: event.target.value })}
-              value={this.state.input} />
-          </Col>
-          <Col xs="auto">
-            <Button variant="primary" onClick={this.submit.bind(this)}>{this.state.mode}</Button>
-          </Col>
-        </Form.Row>
-        <ul>
-          {this.state.items.map(
-            ({ item, id }) =>
-              <li key={id}>
-                {item}
-                <span onClick={this.addDate.bind(this, id)} class="sub"> Add Date &nbsp;</span>
-                <span onClick={this.addNote.bind(this, id)} class="sub"> Add Note &nbsp;</span>
-                <span onClick={this.setPrio.bind(this, id)} class="sub"> Prioity &nbsp;</span>
-                <span onClick={this.edit.bind(this, id)} class="sub">Edit &nbsp; </span>
-                <span onClick={this.delete.bind(this, id)} class="sub"> Delete </span>
-              </li>)}
-        </ul>
-      </div>
-    )
-  }
-}
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { items: [], nextID: 0, editIndex: 0, input: "", mode: "Add" }
-  }
-
-  create() {
-    if (this.state.mode == "Add") {
-      this.setState({
-        nextID: this.state.nextID + 1,
-        input: "",
-        items: [...this.state.items,
-        { item: this.state.input, id: this.state.nextID + 1 }]
-      })
-    }
-    else {
-      var newItems = this.state.items;
-      newItems[this.state.editIndex].item = this.state.input;
-
-      this.setState({
-        mode: "Add",
-        input: "",
-        items: newItems
-      })
-    }
-  }
-
-  delete(delID) {
+  deleteTitle(delID) {
     if (this.state.mode != "Edit") {
-
       this.setState({
         items: this.state.items.filter(({ item, id }) => id != delID)
       })
     }
-  }
-
-  edit(editID) {
-    var editItem = this.state.items.find(({ item, id }) => id == editID);
-    this.setState({
-      input: editItem.item,
-      mode: "Edit",
-      editIndex: this.state.items.indexOf(editItem)
-    })
+    //console.log(delID)
   }
 
   render() {
-
     return (
       <div className="App">
         <header class="App-header">
           <p>Dunder Mifflin Infinity 2.0</p>
         </header>
-        <Container>
-          <div class="intro">
-            Create Custom Lists Using The Bar Below
-        </div>
-          <Form.Row className="align-items-center">
-            <Col xs="auto">
-              <Form.Control type="text" placeholder="Create List Here" />
-            </Col>
-            <Col xs="auto">
-              <Button variant="primary" onClick={this.create.bind(this)}>Create</Button>
-            </Col>
-          </Form.Row>
-          <div style={{ marginBottom: '100px' }}></div>
-        </Container>
-        <Lists />
+        <div class="intro">
+          Create Custom Lists Using The Input Below
+          </div>
+        <Form.Row>
+          <Col></Col>
+          <Col xs="3">
+            <Form.Control type="text" class="inputList" placeholder="Enter List Here"
+              onChange={(event) => this.setState({ input: event.target.value })}
+              value={this.state.input} />
+            <div id="err"></div>
+          </Col>
+          <Col xs="auto">
+            <Button variant="primary" onClick={this.create.bind(this)}>Create</Button>
+          </Col>
+          <Col xs="auto">
+            <Button variant="warning" onClick={this.edit.bind(this)}>{this.state.mode}</Button>
+          </Col>
+          <Col xs="auto">
+            <Button variant="danger" onClick={this.delete.bind(this)}>Delete</Button>
+          </Col>
+          <Col></Col>
+        </Form.Row>
+
+        <div style={{ marginBottom: '100px' }}></div>
+
+        {this.state.items.map(
+          ({ title, id }) =>
+            <Lists title={title} key={id} />
+        )}
       </div>
     )
   }
