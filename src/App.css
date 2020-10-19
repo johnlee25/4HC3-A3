@@ -9,6 +9,14 @@
   color:  #61dafb;
   text-align: center;
   margin-bottom: 50px;
+
+}
+
+.signout{
+  float: right;
+  justify-content: right;
+  text-align: right;
+  margin-right: 10%;
 }
 
 .intro{

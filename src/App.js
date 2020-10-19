@@ -8,7 +8,7 @@ import { Button, Col, Form } from 'react-bootstrap';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { items: [], nextID: 0, editIndex: 0, input: "", mode: "Edit" }
+    this.state = { items: [], nextID: 0, editIndex: 0, input: "", mode: "Edit"}
   }
 
   create() {
@@ -22,84 +22,44 @@ class App extends React.Component {
         { title: this.state.input, id: this.state.nextID + 1 }]
       })
     }
-    else if (this.state.mode == "Done") {
-      errormsg.style.display = "inline-block";
-      errormsg.innerHTML = "In Edit Mode";
-    }
     else {
       errormsg.style.display = "inline-block";
       errormsg.innerHTML = "Field Is Blank";
     }
   }
 
-  delete() {
-    let errormsg = document.getElementById("err");
-    var dele = this.state.items.find(({ title }) => this.state.input == title);
-    //console.log(dele.title);
-    if (this.state.input == dele.title) {
-      errormsg.style.display = "none";
-      this.setState({
-        input: "",
-        items: this.state.items.filter(({ title, id }) => title != this.state.input)
-      })
-    }
-    else {
-      errormsg.style.display = "inline-block";
-      errormsg.innerHTML = "Could Not Find";
-    }
-  }
-
-  edit() {
-    let errormsg = document.getElementById("err");
-    if (this.state.input != "" && this.state.mode == "Edit") {
-      errormsg.style.display = "none";
-      var edit = this.state.items.find(({ title, id }) => this.state.input == title);
-      this.setState({
-        input: edit.title,
-        mode: "Done",
-        editIndex: this.state.items.indexOf(edit)
-      })
-      console.log(this.state.items.indexOf(edit));
-    }
-    else if(this.state.input != "" && this.state.mode == "Done"){
-      errormsg.style.display = "none";
-      var newTitle = this.state.title;
-      newTitle[this.state.editIndex].title = this.state.input;
-      this.setState({
-        mode: "Edit",
-        input: "",
-        items: newTitle
-      })
-    }
-    else{
-      errormsg.style.display = "inline-block";
-      errormsg.innerHTML = "Field Is Blank";
-    }
-  }
-
-  editTitle(prioID) {
-    var editPrio = this.state.items.find(({ item, id }) => id == prioID);
+  deleP(delID) {
     this.setState({
-      input: editPrio.item,
-      prio: "Edit",
-      prioIndex: this.state.items.indexOf(editPrio)
+      items: this.state.items.filter(({ title, id }) => id != delID)
     })
   }
 
-  deleteTitle(delID) {
-    if (this.state.mode != "Edit") {
-      this.setState({
-        items: this.state.items.filter(({ item, id }) => id != delID)
-      })
-    }
-    //console.log(delID)
+
+  editP(inputTitle, editID) {
+    var editItem = this.state.items.find(({ title, id }) => id == editID);
+    var temp=this.state.items.indexOf(editItem);
+    var newTitle = this.state.items;
+    newTitle[temp].title = inputTitle;
+    this.setState({
+      items: newTitle
+    })
   }
 
   render() {
     return (
       <div className="App">
-        <header class="App-header">
-          <p>Dunder Mifflin Infinity 2.0</p>
+        <header>
+          <Form.Row>
+            <Col></Col>
+            <Col>
+              <div class="App-header">Dunder Mifflin Infinity 2.0</div>
+            </Col>
+            <Col >
+              <div class="signout">
+                <Button variant="success" >Sign Out</Button>
+              </div>
+            </Col>
+          </Form.Row>
         </header>
         <div class="intro">
           Create Custom Lists Using The Input Below
@@ -115,12 +75,6 @@ class App extends React.Component {
           <Col xs="auto">
             <Button variant="primary" onClick={this.create.bind(this)}>Create</Button>
           </Col>
-          <Col xs="auto">
-            <Button variant="warning" onClick={this.edit.bind(this)}>{this.state.mode}</Button>
-          </Col>
-          <Col xs="auto">
-            <Button variant="danger" onClick={this.delete.bind(this)}>Delete</Button>
-          </Col>
           <Col></Col>
         </Form.Row>
 
@@ -128,13 +82,11 @@ class App extends React.Component {
 
         {this.state.items.map(
           ({ title, id }) =>
-            <Lists title={title} key={id} />
+            <Lists title={title} key={id} indexnum={id} sendTitle={this.editP.bind(this)} sendDele={this.deleP.bind(this)} />
         )}
       </div>
     )
   }
 }
-
-
 
 export default App;
