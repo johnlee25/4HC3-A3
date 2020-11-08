@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Lists from './Lists.js'
+import Lists from './Lists.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Col, Form } from 'react-bootstrap';
 
